@@ -28,7 +28,9 @@ public class TELEOP extends LinearOpMode {
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        boolean fastMode = false;
+        DcMotor lights = hardwareMap.dcMotor.get("Lights");
+        lights.setPower(1);
+
         boolean clawOpen = false;
         boolean loweringSlide = false;
 
@@ -42,9 +44,17 @@ public class TELEOP extends LinearOpMode {
             double rx = -gamepad1.right_stick_x * 0.6;
             double ls = gamepad1.dpad_up ? 0.8 : (gamepad1.dpad_down ? -0.2 : 0.1);
 
-            if (gamepad1.right_trigger > 0) {
-                fastMode = !fastMode;
-            } else if (gamepad1.a && !loweringSlide) {
+            telemetry.addData("y", gamepad1.left_stick_y);
+            telemetry.addData("x", gamepad1.left_stick_x);
+            telemetry.addData("rx", -gamepad1.right_stick_x);
+            telemetry.update();
+
+            //sensitifiby adjustments
+            y /= 1.8;
+            x /= 1.8;
+            rx /= 1.8;
+
+            if (gamepad1.a && !loweringSlide) {
                 LSmotor.setTargetPosition(0);
                 LSmotor.setPower(-0.4);
                 loweringSlide = true;
@@ -55,12 +65,6 @@ public class TELEOP extends LinearOpMode {
                 loweringSlide = false;
             }
 
-
-            if (!fastMode) {
-                y /= 2;
-                x /= 2;
-                rx /= 2;
-            }
 
             clawOpen = !(gamepad1.left_trigger > 0);
             clawServo.setPosition(clawOpen ? 0.6 : 0.3);
@@ -84,8 +88,6 @@ public class TELEOP extends LinearOpMode {
                 LSmotor.setPower(ls);
             }
 
-            telemetry.addData("e", LSmotor.getCurrentPosition());
-            telemetry.update();
         }
     }
 }

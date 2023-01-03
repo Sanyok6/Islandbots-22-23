@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.ComputerVision.SignalSleevePipeline.Colors;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
+
 @Config
 @Autonomous(group = "drive")
 public class AUTONOMOUS extends LinearOpMode {
@@ -33,6 +34,11 @@ public class AUTONOMOUS extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("LFmotor");
+        DcMotor motorBackLeft = hardwareMap.dcMotor.get("LBmotor");
+        DcMotor motorFrontRight = hardwareMap.dcMotor.get("RFmotor");
+        DcMotor motorBackRight = hardwareMap.dcMotor.get("RBmotor");
 
         DcMotor lights = hardwareMap.dcMotor.get("Lights");
         lights.setPower(1);
@@ -95,23 +101,46 @@ public class AUTONOMOUS extends LinearOpMode {
         double r = RightDist.getDistance(DistanceUnit.CM);
         double l = LeftDist.getDistance(DistanceUnit.CM);
 
-        while (!(r > l-10 && r < l+10)) {
+        while (r > 22) {
+
             r = RightDist.getDistance(DistanceUnit.CM);
             l = LeftDist.getDistance(DistanceUnit.CM);
 
-            if (r < l) {
-                drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).strafeLeft(l > 100 ? 10 : l - r).build());
-            } else {
-                drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).strafeRight(r > 100 ? 10 : r - l).build());
-            }
+            double y = 0.04;
+            double x = r>l ? 0.05 : -0.05;
+
+            double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
+            double frontLeftPower = (y + x) / denominator;
+            double backLeftPower = (y - x) / denominator;
+            double frontRightPower = (y - x) / denominator;
+            double backRightPower = (y + x) / denominator;
+
+            motorFrontLeft.setPower(frontLeftPower);
+            motorBackLeft.setPower(backLeftPower);
+            motorFrontRight.setPower(frontRightPower);
+            motorBackRight.setPower(backRightPower);
+
+            sleep(50);
         }
 
-        telemetry.addData("RightDist", RightDist.getDistance(DistanceUnit.CM));
-        telemetry.addData("LeftDist", LeftDist.getDistance(DistanceUnit.CM));
-        telemetry.addData("d", Math.sqrt(r*r-225));
-        telemetry.update();
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackRight.setPower(0);
 
-        drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).forward((Math.sqrt(Math.pow((r+l)/2, 2)-225))-22).build());
+//        while (!(r > l-10 && r < l+10)) {
+//            r = RightDist.getDistance(DistanceUnit.CM);
+//            l = LeftDist.getDistance(DistanceUnit.CM);
+//
+//            if (r < l) {
+//                drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).strafeLeft(l > 100 ? 10 : l - r).build());
+//            } else {
+//                drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).strafeRight(r > 100 ? 10 : r - l).build());
+//            }
+//        }
+//
+//        drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).forward((Math.sqrt(Math.pow((r+l)/2, 2)-225))-22).build());
+
 
         clawServo.setPosition(0.3);
         sleep(300);
@@ -119,7 +148,7 @@ public class AUTONOMOUS extends LinearOpMode {
 
         drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).back(10).build());
 
-        LSmotor.setPower(-0.7);
+        LSmotor.setPower(-0.5);
 
         sleep(1500);
 
