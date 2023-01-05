@@ -97,17 +97,25 @@ public class AUTONOMOUS extends LinearOpMode {
 
         LSmotor.setPower(0.1);
 
+        boolean d = false;
 
         double r = RightDist.getDistance(DistanceUnit.CM);
         double l = LeftDist.getDistance(DistanceUnit.CM);
 
-        while (r > 22) {
+
+        while (r > 18) {
 
             r = RightDist.getDistance(DistanceUnit.CM);
             l = LeftDist.getDistance(DistanceUnit.CM);
 
             double y = 0.04;
-            double x = r>l ? 0.05 : -0.05;
+
+            double x = r > l ? 0.05 : -0.05;
+            x = d ? 0 : x;
+
+            if (r < 22 || l < 22) {
+                d = true;
+            }
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
             double frontLeftPower = (y + x) / denominator;

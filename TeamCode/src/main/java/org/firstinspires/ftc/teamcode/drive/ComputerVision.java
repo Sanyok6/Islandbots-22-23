@@ -56,8 +56,8 @@ public class ComputerVision {
 
         public enum Colors {RED, BLUE, GREEN}
 
-        Point regionPointA = new Point(140, 50);
-        Point regionPointB = new Point(160, 110);
+        Point regionPointA = new Point(430, 250);
+        Point regionPointB = new Point(450, 210);
 
         public volatile Colors color = Colors.RED;
         public volatile int r, g, b = 0;
