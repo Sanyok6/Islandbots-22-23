@@ -50,8 +50,8 @@ public class TELEOP extends LinearOpMode {
             telemetry.update();
 
             //sensitifiby adjustments
-            y /= 1.8;
-            x /= 1.8;
+            y /= 1.6;
+            x /= 1.6;
             rx /= 1.8;
 
             if (gamepad1.a && !loweringSlide) {
@@ -67,7 +67,7 @@ public class TELEOP extends LinearOpMode {
 
 
             clawOpen = !(gamepad1.left_trigger > 0);
-            clawServo.setPosition(clawOpen ? 0.6 : 0.3);
+            clawServo.setPosition(clawOpen ? 0.65 : 0.3);
             telemetry.addData("claw", clawOpen);
 
             // Denominator is the largest motor power (absolute value) or 1

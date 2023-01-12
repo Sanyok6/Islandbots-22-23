@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous(group = "drive")
 public class AUTONOMOUS extends LinearOpMode {
 
-    public static double FORWARD_DIST = 45;
-    public static double STRAFE_DIST = 60;
+    public static double FORWARD_DIST = 44;
+    public static double STRAFE_DIST = 62;
 
     public volatile Colors color;
 
@@ -45,6 +45,7 @@ public class AUTONOMOUS extends LinearOpMode {
 
         DistanceSensor RightDist = hardwareMap.get(DistanceSensor.class, "RightDist");
         DistanceSensor LeftDist = hardwareMap.get(DistanceSensor.class, "LeftDist");
+        DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
 
         ComputerVision vision = new ComputerVision(hardwareMap, telemetry);
 
@@ -101,20 +102,24 @@ public class AUTONOMOUS extends LinearOpMode {
 
         double r = RightDist.getDistance(DistanceUnit.CM);
         double l = LeftDist.getDistance(DistanceUnit.CM);
+        double f = YDist.getDistance(DistanceUnit.CM);
 
 
-        while (r > 18) {
+        while (f > 25) {
 
             r = RightDist.getDistance(DistanceUnit.CM);
             l = LeftDist.getDistance(DistanceUnit.CM);
+            f = YDist.getDistance(DistanceUnit.CM);
 
             double y = 0.04;
 
             double x = r > l ? 0.05 : -0.05;
             x = d ? 0 : x;
 
-            if (r < 22 || l < 22) {
+            if (r < 32 || l < 32) {
                 d = true;
+                telemetry.addData("d", "d");
+                telemetry.update();
             }
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
@@ -129,6 +134,31 @@ public class AUTONOMOUS extends LinearOpMode {
             motorBackRight.setPower(backRightPower);
 
             sleep(50);
+        }
+
+        while (f > 11 && f < 15) {
+
+            f = YDist.getDistance(DistanceUnit.CM);
+
+            double x = f > 13 ? 0.05 : -0.05;
+            double y = 0;
+
+            double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
+            double frontLeftPower = (y + x) / denominator;
+            double backLeftPower = (y - x) / denominator;
+            double frontRightPower = (y - x) / denominator;
+            double backRightPower = (y + x) / denominator;
+
+            motorFrontLeft.setPower(frontLeftPower);
+            motorBackLeft.setPower(backLeftPower);
+            motorFrontRight.setPower(frontRightPower);
+            motorBackRight.setPower(backRightPower);
+
+            sleep(50);
+
+            telemetry.addData("d", f);
+            telemetry.update();
+
         }
 
         motorFrontLeft.setPower(0);
@@ -156,7 +186,7 @@ public class AUTONOMOUS extends LinearOpMode {
 
         drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).back(10).build());
 
-        LSmotor.setPower(-0.5);
+        LSmotor.setPower(-0.4);
 
         sleep(1500);
 
