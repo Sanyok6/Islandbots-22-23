@@ -7,9 +7,44 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
 @TeleOp(group = "default")
 public class TELEOP extends LinearOpMode {
+
+    double target = -1000;
+    boolean reached = true;
+
+    private class liftSlide extends Thread {
+        DcMotor LSmotor = hardwareMap.dcMotor.get("LSmotor");
+
+        public liftSlide() {}
+
+        @Override
+        public void run()
+        {
+            while (!isInterrupted() && opModeIsActive())
+            {
+                if (reached) {
+                    double ls = gamepad2.dpad_up ? 0.9 : (gamepad2.dpad_down ? -0.5 : 0.1);
+                    if (LSmotor.getCurrentPosition() < -3000 && ls > 0) {ls = 0.1;}
+                    LSmotor.setPower(ls);
+                } else {
+                    LSmotor.setPower(target > LSmotor.getCurrentPosition() ? -0.6 : 0.6);
+                    reached = LSmotor.getCurrentPosition() > target-50 && LSmotor.getCurrentPosition() < target+50;
+                    telemetry.addData("r", reached);
+                    telemetry.addData("l", LSmotor.getCurrentPosition());
+                    telemetry.update();
+                }
+
+                if (gamepad2.y) {
+                    LSmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    LSmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                }
+
+                idle();
+            }
+        }
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Declare our motors
@@ -19,9 +54,10 @@ public class TELEOP extends LinearOpMode {
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("RFmotor");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("RBmotor");
 
-        DcMotor LSmotor = hardwareMap.dcMotor.get("LSmotor");
+//        DcMotor LSmotor = hardwareMap.dcMotor.get("LSmotor");
 
         Servo clawServo = hardwareMap.servo.get("claw");
+        Servo flipServo = hardwareMap.servo.get("flip");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -31,18 +67,25 @@ public class TELEOP extends LinearOpMode {
         DcMotor lights = hardwareMap.dcMotor.get("Lights");
         lights.setPower(1);
 
-        boolean clawOpen = false;
         boolean loweringSlide = false;
 
         waitForStart();
 
         if (isStopRequested()) return;
 
+        Thread lt = new liftSlide();
+        lt.start();
+
+        sleep(1000);
+
         while (opModeIsActive()) {
             double y = gamepad1.left_stick_x * -0.5;
             double x = -gamepad1.left_stick_y;
             double rx = -gamepad1.right_stick_x * 0.6;
-            double ls = gamepad2.dpad_up ? 0.8 : (gamepad2.dpad_down ? -0.2 : 0.1);
+            double ls = gamepad2.dpad_up ? 0.9 : (gamepad2.dpad_down ? -0.5 : 0.1);
+
+//            if (ls > 0.5 && LSmotor.getCurrentPosition() < -3000) { ls = 0.1; }
+//            else if (ls < 0.2 && LSmotor.getCurrentPosition() >= -125) { ls = 0.1; }
 
             telemetry.addData("y", gamepad1.left_stick_y);
             telemetry.addData("x", gamepad1.left_stick_x);
@@ -54,20 +97,21 @@ public class TELEOP extends LinearOpMode {
             x /= 1.6;
             rx /= 2;
 
-            if (gamepad2.a && !loweringSlide) {
-                LSmotor.setTargetPosition(0);
-                LSmotor.setPower(-0.4);
-                loweringSlide = true;
+            if (gamepad2.a) {
+                target = 0;
+                reached = false;
             }
 
-            if (LSmotor.getCurrentPosition() > -10 && loweringSlide) {
-                LSmotor.setPower(0);
-                loweringSlide = false;
-            }
+//            if (reached) {
+//                target
+//            }
 
-
-            clawOpen = !(gamepad2.left_trigger > 0);
+            boolean clawOpen = !(gamepad2.left_trigger > 0);
             clawServo.setPosition(clawOpen ? 0.65 : 0.3);
+            telemetry.addData("claw", clawOpen);
+
+            boolean flipping = !(gamepad2.right_trigger > 0);
+            flipServo.setPosition(flipping ? -0.9 : 0.2);
             telemetry.addData("claw", clawOpen);
 
             // Denominator is the largest motor power (absolute value) or 1
@@ -83,13 +127,6 @@ public class TELEOP extends LinearOpMode {
             motorBackLeft.setPower(backLeftPower);
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
-
-            if (!loweringSlide) {
-                LSmotor.setPower(ls);
-            }
-
-            telemetry.addData("d", LSmotor.getCurrentPosition());
-            telemetry.update();
 
         }
     }
