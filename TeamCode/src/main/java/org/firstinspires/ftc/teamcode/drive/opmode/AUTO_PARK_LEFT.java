@@ -13,10 +13,10 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Config
 @Autonomous(group = "drive")
-public class OLD extends LinearOpMode {
+public class AUTO_PARK_LEFT extends LinearOpMode {
 
-    public static double FORWARD_DIST = 37;
-    public static double STRAFE_DIST = 60;
+    public static double FORWARD_DIST = 28;
+    public static double STRAFE_DIST = 26;
 
     public volatile ComputerVision.SignalSleevePipeline.Colors color;
 
@@ -37,11 +37,11 @@ public class OLD extends LinearOpMode {
                 .back(FORWARD_DIST)
                 .build();
 
-        Trajectory strafeRight = drive.trajectoryBuilder(new Pose2d())
+        Trajectory strafeRight = drive.trajectoryBuilder(trajectoryForward.end())
                 .strafeRight(STRAFE_DIST)
                 .build();
 
-        Trajectory strafeLeft = drive.trajectoryBuilder(new Pose2d())
+        Trajectory strafeLeft = drive.trajectoryBuilder(trajectoryForward.end())
                 .strafeLeft(STRAFE_DIST)
                 .build();
 

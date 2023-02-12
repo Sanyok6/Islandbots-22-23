@@ -4,12 +4,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -18,11 +15,10 @@ import org.firstinspires.ftc.teamcode.drive.ComputerVision;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import org.firstinspires.ftc.teamcode.drive.ComputerVision.SignalSleevePipeline.Colors;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
 @Autonomous(group = "drive")
-public class AUTONOMOUS extends LinearOpMode {
+public class _MAIN_AUTO_LEFT extends LinearOpMode {
 
     public volatile Colors color;
 
@@ -64,10 +60,10 @@ public class AUTONOMOUS extends LinearOpMode {
         }
         LSmotor.setPower(0.1);
 
-        Pose2d startingPose = new Pose2d(-35, -63, Math.toRadians(90));
+        Pose2d startingPose = new Pose2d(-35, -62, Math.toRadians(90));
         drive.setPoseEstimate(startingPose);
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
                 .splineToConstantHeading(new Vector2d(-34, -40), Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(-23.4, -34), Math.toRadians(90))
                 .build();
@@ -155,8 +151,6 @@ public class AUTONOMOUS extends LinearOpMode {
         } else {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(20).build());
         }
-
-
 
 
 //        Trajectory traj = drive.trajectoryBuilder(startingPose)

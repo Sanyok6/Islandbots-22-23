@@ -4,12 +4,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -18,12 +15,11 @@ import org.firstinspires.ftc.teamcode.drive.ComputerVision;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import org.firstinspires.ftc.teamcode.drive.ComputerVision.SignalSleevePipeline.Colors;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
 @Config
 @Autonomous(group = "drive")
-public class RIGHT_AUTO extends LinearOpMode {
+public class _MAIN_AUTO_RIGHT extends LinearOpMode {
 
     public volatile Colors color;
 
@@ -65,21 +61,22 @@ public class RIGHT_AUTO extends LinearOpMode {
         }
         LSmotor.setPower(0.1);
 
-        Pose2d startingPose = new Pose2d(35, -63, Math.toRadians(90));
+        Pose2d startingPose = new Pose2d(35, -61, Math.toRadians(90));
         drive.setPoseEstimate(startingPose);
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(35, -63, Math.toRadians(90)))
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d(35, -61, Math.toRadians(90)))
                 .splineToConstantHeading(new Vector2d(34, -40), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(23.4, -34), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(23.4, -34.5), Math.toRadians(90))
                 .build();
-        drive.followTrajectory(traj);
-
-        traj = drive.trajectoryBuilder(traj.end()).forward(1).build();
         drive.followTrajectory(traj);
 
         lineUpToJunction();
 
-        sleep(200);
+        traj = drive.trajectoryBuilder(traj.end()).back(0.5).build();
+        drive.followTrajectory(traj);
+
+        sleep(500);
+
         clawServo.setPosition(0.3);
 
         sleep(500);
@@ -96,7 +93,7 @@ public class RIGHT_AUTO extends LinearOpMode {
         drive.followTrajectory(traj);
 
         traj = drive.trajectoryBuilder(traj.end())
-                .splineToConstantHeading(new Vector2d(34, -11), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(33, -11), Math.toRadians(90))
                 .build();
         drive.followTrajectory(traj);
 
@@ -126,6 +123,11 @@ public class RIGHT_AUTO extends LinearOpMode {
         drive.followTrajectory(traj);
 
         lineUpToJunction();
+
+        traj = drive.trajectoryBuilder(traj.end()).back(1).build();
+        drive.followTrajectory(traj);
+        sleep(500);
+
         clawServo.setPosition(0.3);
         sleep(500);
 
