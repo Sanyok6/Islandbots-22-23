@@ -24,12 +24,12 @@ public class TELEOP extends LinearOpMode {
             while (!isInterrupted() && opModeIsActive())
             {
                 if (reached) {
-                    double ls = gamepad2.dpad_up ? 0.9 : (gamepad2.dpad_down ? -0.5 : 0.1);
-                    if (LSmotor.getCurrentPosition() < -3000 && ls > 0) {ls = 0.1;}
+                    double ls = gamepad2.dpad_up ? 1 : (gamepad2.dpad_down ? -0.8 : 0.1);
+                    if ((LSmotor.getCurrentPosition() < -3000 && ls > 0) || (LSmotor.getCurrentPosition() > -100 && ls < 0)) {ls = 0.1;}
                     LSmotor.setPower(ls);
                 } else {
-                    LSmotor.setPower(target > LSmotor.getCurrentPosition() ? -0.6 : 0.6);
-                    reached = LSmotor.getCurrentPosition() > target-50 && LSmotor.getCurrentPosition() < target+50;
+                    LSmotor.setPower(target > LSmotor.getCurrentPosition() ? -1 : 1);
+                    reached = LSmotor.getCurrentPosition() > target-75 && LSmotor.getCurrentPosition() < target+75;
                     telemetry.addData("r", reached);
                     telemetry.addData("l", LSmotor.getCurrentPosition());
                     telemetry.update();
