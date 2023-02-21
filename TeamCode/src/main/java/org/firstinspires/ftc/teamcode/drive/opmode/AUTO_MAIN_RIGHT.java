@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.drive.ComputerVision.SignalSleevePipeline.
 
 @Config
 @Autonomous(group = "drive")
-public class _MAIN_AUTO_RIGHT extends LinearOpMode {
+public class AUTO_MAIN_RIGHT extends LinearOpMode {
 
     public volatile Colors color;
 
@@ -44,6 +44,8 @@ public class _MAIN_AUTO_RIGHT extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         DcMotor LSmotor = hardwareMap.dcMotor.get("LSmotor");
+        LSmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LSmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         Servo clawServo = hardwareMap.servo.get("claw");
 
@@ -151,11 +153,9 @@ public class _MAIN_AUTO_RIGHT extends LinearOpMode {
                 .build();
         drive.followTrajectory(traj);
 
-
         if (color == Colors.BLUE) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(20).build());
-        } else if (color == Colors.RED) {
-        } else {
+        } else if (color == Colors.GREEN) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(20).build());
         }
 

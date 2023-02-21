@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.ComputerVision.SignalSleevePipeline.
 
 @Config
 @Autonomous(group = "drive")
-public class _MAIN_AUTO_LEFT extends LinearOpMode {
+public class AUTO_MAIN_LEFT extends LinearOpMode {
 
     public volatile Colors color;
 
@@ -43,6 +43,8 @@ public class _MAIN_AUTO_LEFT extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         DcMotor LSmotor = hardwareMap.dcMotor.get("LSmotor");
+        LSmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LSmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         Servo clawServo = hardwareMap.servo.get("claw");
 
@@ -83,7 +85,7 @@ public class _MAIN_AUTO_LEFT extends LinearOpMode {
         drive.followTrajectory(traj);
 
         while (LSmotor.getCurrentPosition() < -500) {
-            LSmotor.setPower(-0.7);
+            LSmotor.setPower(-1);
         }
         LSmotor.setPower(0.1);
 
@@ -102,11 +104,11 @@ public class _MAIN_AUTO_LEFT extends LinearOpMode {
 
         sleep(500);
 
-        clawServo.setPosition(0.7);
+        clawServo.setPosition(1);
         sleep(500);
 
         while (LSmotor.getCurrentPosition() > -3000) {
-            LSmotor.setPower(0.7);
+            LSmotor.setPower(1);
         }
         LSmotor.setPower(0.1);
 
@@ -130,7 +132,7 @@ public class _MAIN_AUTO_LEFT extends LinearOpMode {
         drive.followTrajectory(traj);
 
         while (LSmotor.getCurrentPosition() > -500) {
-            LSmotor.setPower(-0.7);
+            LSmotor.setPower(-1);
         }
         LSmotor.setPower(0.1);
 
@@ -139,16 +141,12 @@ public class _MAIN_AUTO_LEFT extends LinearOpMode {
                 .build();
         drive.followTrajectory(traj);
 
-        traj = drive.trajectoryBuilder(traj.end())
-                .lineToLinearHeading(new Pose2d(-35, -35, Math.toRadians(90)))
-                .build();
-        drive.followTrajectory(traj);
-
+        telemetry.addData("c", color);
+        telemetry.update();
 
         if (color == Colors.BLUE) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(20).build());
-        } else if (color == Colors.RED) {
-        } else {
+        } else if (color == Colors.GREEN) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(20).build());
         }
 
