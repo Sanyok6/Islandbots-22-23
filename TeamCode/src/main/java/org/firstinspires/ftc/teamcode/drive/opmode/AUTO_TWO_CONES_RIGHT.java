@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -12,9 +14,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.ComputerVision;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-public class AUTO_MAIN_RIGHT  extends LinearOpMode {
+import org.firstinspires.ftc.teamcode.drive.ComputerVision.SignalSleevePipeline.Colors;
 
-    public volatile ComputerVision.SignalSleevePipeline.Colors color;
+
+@Config
+@Autonomous(group = "drive")
+public class AUTO_TWO_CONES_RIGHT extends LinearOpMode {
+
+    public volatile Colors color;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -48,31 +56,27 @@ public class AUTO_MAIN_RIGHT  extends LinearOpMode {
 
         sleep(500);
 
-        while (LSmotor.getCurrentPosition() > -50) {
-            LSmotor.setPower(0.7);
-        }
-        LSmotor.setPower(0.1);
-
-        Pose2d startingPose = new Pose2d(-35, -62, Math.toRadians(90));
-        drive.setPoseEstimate(startingPose);
-
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(35, -62, Math.toRadians(90)))
-                .splineToConstantHeading(new Vector2d(34, -40), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(22.5, -34), Math.toRadians(90))
-                .build();
-        drive.followTrajectory(traj);
-
         while (LSmotor.getCurrentPosition() > -2000) {
             LSmotor.setPower(0.7);
         }
         LSmotor.setPower(0.1);
-//
-//        traj = drive.trajectoryBuilder(traj.end()).forward(4).build();
-//        drive.followTrajectory(traj);
+
+        Pose2d startingPose = new Pose2d(35, -61, Math.toRadians(90));
+        drive.setPoseEstimate(startingPose);
+
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d(35, -61, Math.toRadians(90)))
+                .splineToConstantHeading(new Vector2d(34, -40), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(23.4, -34.5), Math.toRadians(90))
+                .build();
+        drive.followTrajectory(traj);
 
         lineUpToJunction();
 
-        sleep(200);
+        traj = drive.trajectoryBuilder(traj.end()).back(0.5).build();
+        drive.followTrajectory(traj);
+
+        sleep(500);
+
         clawServo.setPosition(0.3);
 
         sleep(500);
@@ -80,23 +84,83 @@ public class AUTO_MAIN_RIGHT  extends LinearOpMode {
         traj = drive.trajectoryBuilder(traj.end()).back(4).build();
         drive.followTrajectory(traj);
 
-        clawServo.setPosition(0.4);
-
-        while (LSmotor.getCurrentPosition() < -20) {
-            LSmotor.setPower(-1);
+        while (LSmotor.getCurrentPosition() < -500) {
+            LSmotor.setPower(-0.7);
         }
         LSmotor.setPower(0.1);
 
-        telemetry.addData("c", color);
-        telemetry.update();
+        traj = drive.trajectoryBuilder(traj.end()).lineToLinearHeading(new Pose2d(30, -35, Math.toRadians(0))).build();
+        drive.followTrajectory(traj);
 
-        if (color == ComputerVision.SignalSleevePipeline.Colors.BLUE) {
-            drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(35).build());
-        } else if (color == ComputerVision.SignalSleevePipeline.Colors.RED) {
-            drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(10).build());
-        } else if (color == ComputerVision.SignalSleevePipeline.Colors.GREEN) {
-            drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(10).build());
+        traj = drive.trajectoryBuilder(traj.end())
+                .splineToConstantHeading(new Vector2d(33, -11), Math.toRadians(90))
+                .build();
+        drive.followTrajectory(traj);
+
+        traj = drive.trajectoryBuilder(traj.end())
+                .lineTo(new Vector2d(60, -11))
+                .build();
+        drive.followTrajectory(traj);
+
+        sleep(500);
+
+        clawServo.setPosition(0.7);
+        sleep(500);
+
+        while (LSmotor.getCurrentPosition() > -3000) {
+            LSmotor.setPower(0.7);
         }
+        LSmotor.setPower(0.1);
+
+        traj = drive.trajectoryBuilder(traj.end())
+                .lineTo(new Vector2d(32, -12))
+                .build();
+        drive.followTrajectory(traj);
+
+        traj = drive.trajectoryBuilder(traj.end())
+                .lineToLinearHeading(new Pose2d(24, -14, Math.toRadians(90)))
+                .build();
+        drive.followTrajectory(traj);
+
+        lineUpToJunction();
+
+        traj = drive.trajectoryBuilder(traj.end()).back(1).build();
+        drive.followTrajectory(traj);
+        sleep(500);
+
+        clawServo.setPosition(0.3);
+        sleep(500);
+
+        traj = drive.trajectoryBuilder(traj.end())
+                .back(2)
+                .build();
+        drive.followTrajectory(traj);
+
+        while (LSmotor.getCurrentPosition() > -500) {
+            LSmotor.setPower(-0.7);
+        }
+        LSmotor.setPower(0.1);
+
+        traj = drive.trajectoryBuilder(traj.end())
+                .splineToConstantHeading(new Vector2d(34, -11), Math.toRadians(90))
+                .build();
+        drive.followTrajectory(traj);
+
+        traj = drive.trajectoryBuilder(traj.end())
+                .lineToLinearHeading(new Pose2d(35, -35, Math.toRadians(90)))
+                .build();
+        drive.followTrajectory(traj);
+
+        if (color == Colors.BLUE) {
+            drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(20).build());
+        } else if (color == Colors.GREEN) {
+            drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(20).build());
+        }
+
+        while (!isStopRequested() && opModeIsActive()) {
+            telemetry.addData("d", YDist.getDistance(DistanceUnit.CM));
+            telemetry.update();
+        };
     }
 
     public void lineUpToJunction() {
@@ -137,7 +201,5 @@ public class AUTO_MAIN_RIGHT  extends LinearOpMode {
         motorBackLeft.setPower(0);
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
-        sleep(50);
     }
-
 }
