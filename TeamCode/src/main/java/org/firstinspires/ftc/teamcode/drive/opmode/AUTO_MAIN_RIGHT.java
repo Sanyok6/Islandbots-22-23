@@ -91,11 +91,11 @@ public class AUTO_MAIN_RIGHT  extends LinearOpMode {
         telemetry.update();
 
         if (color == ComputerVision.SignalSleevePipeline.Colors.BLUE) {
-            drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(35).build());
+            drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(35).build());
         } else if (color == ComputerVision.SignalSleevePipeline.Colors.RED) {
-            drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(10).build());
-        } else if (color == ComputerVision.SignalSleevePipeline.Colors.GREEN) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(10).build());
+        } else if (color == ComputerVision.SignalSleevePipeline.Colors.GREEN) {
+            drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(10).build());
         }
     }
 
