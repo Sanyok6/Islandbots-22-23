@@ -12,6 +12,8 @@ public class TELEOP extends LinearOpMode {
 
     double target = 0;
     boolean reached = true;
+    boolean reversed = true;
+    int s = 0;
 
     private class liftSlide extends Thread {
         DcMotor LSmotor = hardwareMap.dcMotor.get("LSmotor");
@@ -38,6 +40,10 @@ public class TELEOP extends LinearOpMode {
                 if (gamepad2.y) {
                     LSmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     LSmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                }
+
+                if (gamepad2.x) {
+                    LSmotor.setPower(-3);
                 }
 
                 idle();
@@ -86,9 +92,17 @@ public class TELEOP extends LinearOpMode {
             telemetry.addData("rx", -gamepad1.right_stick_x);
             telemetry.update();
 
+            if (gamepad1.x) {
+                s++;
+                if (s > 100) {
+                    reversed = !reversed;
+                    s = 0;
+                }
+            }
+
             //sensitivity adjustments
-            y /= 1.6;
-            x /= 1.6;
+            y /= 1.6 * (reversed ? -1 : 1);
+            x /= 1.6 * (reversed ? -1 : 1);
             rx /= 2;
 
             if (gamepad2.a) {

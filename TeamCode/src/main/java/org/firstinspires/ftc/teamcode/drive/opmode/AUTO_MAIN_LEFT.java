@@ -23,11 +23,6 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("LFmotor");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("LBmotor");
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("RFmotor");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("RBmotor");
-
         DcMotor lights = hardwareMap.dcMotor.get("Lights");
         lights.setPower(1);
 
@@ -62,7 +57,7 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
 
         Trajectory traj = drive.trajectoryBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
                 .splineToConstantHeading(new Vector2d(-34, -40), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-22.5, -34), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-22, -37), Math.toRadians(90))
                 .build();
         drive.followTrajectory(traj);
 
@@ -70,7 +65,7 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
             LSmotor.setPower(0.7);
         }
         LSmotor.setPower(0.1);
-//
+
 //        traj = drive.trajectoryBuilder(traj.end()).forward(4).build();
 //        drive.followTrajectory(traj);
 
@@ -81,7 +76,7 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
 
         sleep(500);
 
-        traj = drive.trajectoryBuilder(traj.end()).back(4).build();
+        traj = drive.trajectoryBuilder(traj.end()).back(3).build();
         drive.followTrajectory(traj);
 
         clawServo.setPosition(0.4);
