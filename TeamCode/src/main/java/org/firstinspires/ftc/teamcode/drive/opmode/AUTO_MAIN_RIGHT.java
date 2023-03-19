@@ -11,14 +11,14 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.ComputerVision;
+import org.firstinspires.ftc.teamcode.drive.SignalSleeveColorDetection;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Config
 @Autonomous(group = "drive")
 public class AUTO_MAIN_RIGHT extends LinearOpMode {
 
-    public volatile ComputerVision.SignalSleevePipeline.Colors color;
+    public volatile SignalSleeveColorDetection.SignalSleevePipeline.Colors color;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,7 +28,7 @@ public class AUTO_MAIN_RIGHT extends LinearOpMode {
 
         DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
 
-        ComputerVision vision = new ComputerVision(hardwareMap, telemetry);
+        SignalSleeveColorDetection vision = new SignalSleeveColorDetection(hardwareMap, telemetry);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -90,11 +90,11 @@ public class AUTO_MAIN_RIGHT extends LinearOpMode {
         telemetry.addData("c", color);
         telemetry.update();
 
-        if (color == ComputerVision.SignalSleevePipeline.Colors.BLUE) {
+        if (color == SignalSleeveColorDetection.SignalSleevePipeline.Colors.BLUE) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(10).build());
-        } else if (color == ComputerVision.SignalSleevePipeline.Colors.RED) {
+        } else if (color == SignalSleeveColorDetection.SignalSleevePipeline.Colors.RED) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(10).build());
-        } else if (color == ComputerVision.SignalSleevePipeline.Colors.GREEN) {
+        } else if (color == SignalSleeveColorDetection.SignalSleevePipeline.Colors.GREEN) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(35).build());
         }
     }

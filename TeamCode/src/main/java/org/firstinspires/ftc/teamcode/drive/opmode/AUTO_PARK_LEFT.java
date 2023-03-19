@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.drive.ComputerVision;
+import org.firstinspires.ftc.teamcode.drive.SignalSleeveColorDetection;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Config
@@ -18,11 +18,11 @@ public class AUTO_PARK_LEFT extends LinearOpMode {
     public static double FORWARD_DIST = 28;
     public static double STRAFE_DIST = 26;
 
-    public volatile ComputerVision.SignalSleevePipeline.Colors color;
+    public volatile SignalSleeveColorDetection.SignalSleevePipeline.Colors color;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        ComputerVision vision = new ComputerVision(hardwareMap, telemetry);
+        SignalSleeveColorDetection vision = new SignalSleeveColorDetection(hardwareMap, telemetry);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -55,9 +55,9 @@ public class AUTO_PARK_LEFT extends LinearOpMode {
 
         drive.followTrajectory(trajectoryForward);
 
-        if (color == ComputerVision.SignalSleevePipeline.Colors.BLUE) {
+        if (color == SignalSleeveColorDetection.SignalSleevePipeline.Colors.BLUE) {
             drive.followTrajectory(strafeLeft);
-        } else if (color == ComputerVision.SignalSleevePipeline.Colors.RED) {
+        } else if (color == SignalSleeveColorDetection.SignalSleevePipeline.Colors.RED) {
         } else {
             drive.followTrajectory(strafeRight);
         }

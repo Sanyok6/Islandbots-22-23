@@ -11,10 +11,10 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.ComputerVision;
+import org.firstinspires.ftc.teamcode.drive.SignalSleeveColorDetection;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-import org.firstinspires.ftc.teamcode.drive.ComputerVision.SignalSleevePipeline.Colors;
+import org.firstinspires.ftc.teamcode.drive.SignalSleeveColorDetection.SignalSleevePipeline.Colors;
 
 
 @Config
@@ -37,7 +37,7 @@ public class AUTO_TWO_CONES_RIGHT extends LinearOpMode {
 
         DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
 
-        ComputerVision vision = new ComputerVision(hardwareMap, telemetry);
+        SignalSleeveColorDetection vision = new SignalSleeveColorDetection(hardwareMap, telemetry);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 

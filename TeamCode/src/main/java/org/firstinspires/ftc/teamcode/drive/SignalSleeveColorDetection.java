@@ -2,10 +2,6 @@ package org.firstinspires.ftc.teamcode.drive;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -20,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-public class ComputerVision {
+public class SignalSleeveColorDetection {
 
     private final OpenCvWebcam webcam;
     public SignalSleevePipeline pipeline;
@@ -28,7 +24,7 @@ public class ComputerVision {
     private static final int STREAM_WIDTH = 960;
     private static final int STREAM_HEIGHT = 720;
 
-    public ComputerVision(HardwareMap hwMap, Telemetry telemetry)
+    public SignalSleeveColorDetection(HardwareMap hwMap, Telemetry telemetry)
     {
         WebcamName webcamName = hwMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());

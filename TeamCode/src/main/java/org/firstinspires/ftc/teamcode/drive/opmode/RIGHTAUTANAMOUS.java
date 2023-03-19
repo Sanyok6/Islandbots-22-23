@@ -1,25 +1,17 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
-import android.graphics.Color;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.ComputerVision;
+import org.firstinspires.ftc.teamcode.drive.SignalSleeveColorDetection;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
-import org.firstinspires.ftc.teamcode.drive.ComputerVision.SignalSleevePipeline.Colors;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
 @Config
@@ -29,7 +21,7 @@ public class RIGHTAUTANAMOUS extends LinearOpMode {
     public static double FORWARD_DIST = 44;
     public static double STRAFE_DIST = 60 *-1;  // CHANGE TO *-1 WHEN WE ARE ON THE RIGHT SIDE
 
-    public volatile ComputerVision.SignalSleevePipeline.Colors color;
+    public volatile SignalSleeveColorDetection.SignalSleevePipeline.Colors color;
 
 
     @Override
@@ -47,7 +39,7 @@ public class RIGHTAUTANAMOUS extends LinearOpMode {
         DistanceSensor LeftDist = hardwareMap.get(DistanceSensor.class, "LeftDist");
         DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
 
-        ComputerVision vision = new ComputerVision(hardwareMap, telemetry);
+        SignalSleeveColorDetection vision = new SignalSleeveColorDetection(hardwareMap, telemetry);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -174,9 +166,9 @@ public class RIGHTAUTANAMOUS extends LinearOpMode {
 
         LSmotor.setPower(0);
 
-        if (color == ComputerVision.SignalSleevePipeline.Colors.BLUE) {
+        if (color == SignalSleeveColorDetection.SignalSleevePipeline.Colors.BLUE) {
             drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).strafeLeft(STRAFE_DIST*2.5).build());
-        } else if (color == ComputerVision.SignalSleevePipeline.Colors.RED) {
+        } else if (color == SignalSleeveColorDetection.SignalSleevePipeline.Colors.RED) {
             drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).strafeLeft(STRAFE_DIST*1.5).build());
         } else {
             drive.followTrajectory(drive.trajectoryBuilder(new Pose2d()).strafeLeft(STRAFE_DIST*0.5).build());
