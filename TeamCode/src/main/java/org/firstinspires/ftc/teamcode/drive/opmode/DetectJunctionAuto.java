@@ -16,34 +16,41 @@ import java.util.ArrayList;
 public class DetectJunctionAuto extends LinearOpMode {
 
     @Override
-    public void runOpMode() throws InterruptedException
-    {
-        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("LFmotor");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("LBmotor");
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("RFmotor");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("RBmotor");
+    public void runOpMode() throws InterruptedException {
 
-        DetectJunction junctionDetection = new DetectJunction(hardwareMap);
+        DetectJunction detectJunction = new DetectJunction(hardwareMap, telemetry);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         waitForStart();
 
-        while (!isStopRequested()) {
-            int location = junctionDetection.pipeline.getLocation();
+        lineUpToJunctionUsingCamera(detectJunction);
+    }
 
-            telemetry.addData("l", location);
+    void lineUpToJunctionUsingCamera(DetectJunction detectJunction)
+    {
+        DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
+
+        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("LFmotor");
+        DcMotor motorBackLeft = hardwareMap.dcMotor.get("LBmotor");
+        DcMotor motorFrontRight = hardwareMap.dcMotor.get("RFmotor");
+        DcMotor motorBackRight = hardwareMap.dcMotor.get("RBmotor");
+
+        int location = detectJunction.pipeline.getLocation();
+        double distance = YDist.getDistance(DistanceUnit.CM);
+
+        while (!(Math.abs(location-115) < 20 && distance < 40)) {
+            telemetry.addData("x", location);
+            telemetry.addData("y", distance);
             telemetry.update();
 
             double y=0;
-            double x=0;
-//            if (location > 70) {
-//                y=0.07;
-//            } else {
-            x = location > 105 ? 1 : -1;
-            x *= Math.abs(location-105) > 20 ? 0.09 : 0.06;
+            if (distance > 40) {
+                y = 0.07;
+            }
 
-//            }
+            double x = location > 115 ? 1 : -1;
+            x *= Math.abs(location-115) > 30 ? 0.09 : 0.065;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
             double frontLeftPower = (y + x) / denominator;
@@ -56,6 +63,8 @@ public class DetectJunctionAuto extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
 
+            location = detectJunction.pipeline.getLocation();
+            distance = YDist.getDistance(DistanceUnit.CM);
         }
 
         motorFrontLeft.setPower(0);

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -25,7 +26,7 @@ public class DetectJunction {
     OpenCvCamera camera;
     public DetectJunctionPipeline pipeline;
 
-    public DetectJunction(HardwareMap hwMap) {
+    public DetectJunction(HardwareMap hwMap, Telemetry telemetry) {
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         pipeline = new DetectJunctionPipeline();
@@ -35,13 +36,18 @@ public class DetectJunction {
             @Override
             public void onOpened() {
                 camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
+                telemetry.addLine("Camera ready");
+                telemetry.update();
             }
 
             @Override
             public void onError(int errorCode) {
-
+                telemetry.addLine("error");
+                telemetry.update();
             }
         });
+
+        camera.closeCameraDevice();
     }
 
     public static class DetectJunctionPipeline extends OpenCvPipeline {
@@ -78,7 +84,7 @@ public class DetectJunction {
             // find median x-coordinate of yellow pixels
             ArrayList<Integer> results = new ArrayList();
 
-            for (int r=0; r<thresh.rows(); r+=3)
+            for (int r=0; r<thresh.rows(); r+=4)
             {
                 ArrayList<Integer> locations = new ArrayList();
                 for (int c=0; c<thresh.cols(); c++)
