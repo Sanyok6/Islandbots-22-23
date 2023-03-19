@@ -11,24 +11,27 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.ComputerVision;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
+import org.firstinspires.ftc.teamcode.drive.SignalSleeveDetection;
+import org.openftc.apriltag.AprilTagDetection;
+
+import java.util.ArrayList;
 
 @Config
 @Autonomous(group = "drive")
 public class AUTO_MAIN_LEFT extends LinearOpMode {
 
-    public volatile ComputerVision.SignalSleevePipeline.Colors color;
-
     @Override
     public void runOpMode() throws InterruptedException {
 
         DcMotor lights = hardwareMap.dcMotor.get("Lights");
-        lights.setPower(1);
+        lights.setPower(0.01);
 
         DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
 
-        ComputerVision vision = new ComputerVision(hardwareMap, telemetry);
+        SignalSleeveDetection signalSleeveDetection = new SignalSleeveDetection(hardwareMap);
+        int detection;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -38,10 +41,42 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
 
         Servo clawServo = hardwareMap.servo.get("claw");
 
-        waitForStart();
+        boolean decreasing = false;
+        while (!isStarted() && !isStopRequested()) {
+            ArrayList<AprilTagDetection> detections = signalSleeveDetection.pipeline.getLatestDetections();
+
+            if (detections.size() != 0) {
+                detection = detections.get(0).id;
+                if (detection == 17) {
+                    telemetry.addLine("Detected parking spot #1");
+                } else if (detection == 19) {
+                    telemetry.addLine("Detected parking spot #2");
+                } else if (detection == 12) {
+                    telemetry.addLine("Detected parking spot #3");
+                }
+            } else {
+                telemetry.addLine("No tag visible!");
+            }
+
+            telemetry.update();
+
+            if (decreasing) {
+                lights.setPower(lights.getPower()-0.001);
+                if (lights.getPower() < 0.001) { decreasing = false; }
+            } else {
+                lights.setPower(lights.getPower()+0.001);
+                if (lights.getPower() > 0.95) { decreasing = true; }
+            }
+
+            telemetry.addData("lights", lights.getPower());
+
+        }
+
+        lights.setPower(1);
 
         sleep(100);
-        color = vision.pipeline.color;
+
+        detection = signalSleeveDetection.pipeline.getLatestDetections().size() == 0 ? 19 : signalSleeveDetection.pipeline.getLatestDetections().get(0).id | 19;
 
         clawServo.setPosition(0.7);
 
@@ -66,9 +101,6 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
         }
         LSmotor.setPower(0.1);
 
-//        traj = drive.trajectoryBuilder(traj.end()).forward(4).build();
-//        drive.followTrajectory(traj);
-
         lineUpToJunction();
 
         sleep(200);
@@ -86,14 +118,11 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
         }
         LSmotor.setPower(0.1);
 
-        telemetry.addData("c", color);
-        telemetry.update();
-
-        if (color == ComputerVision.SignalSleevePipeline.Colors.BLUE) {
+        if (detection == 17) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(35).build());
-        } else if (color == ComputerVision.SignalSleevePipeline.Colors.RED) {
+        } else if (detection == 19) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeLeft(10).build());
-        } else if (color == ComputerVision.SignalSleevePipeline.Colors.GREEN) {
+        } else if (detection == 12) {
             drive.followTrajectory(drive.trajectoryBuilder(traj.end()).strafeRight(10).build());
         }
     }
