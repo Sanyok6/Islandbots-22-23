@@ -25,7 +25,6 @@ public class DetectJunction {
     OpenCvCamera camera;
     public DetectJunctionPipeline pipeline;
 
-
     public DetectJunction(HardwareMap hwMap) {
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -47,17 +46,7 @@ public class DetectJunction {
 
     public static class DetectJunctionPipeline extends OpenCvPipeline {
 
-        //backlog of frames to average out to reduce noise
-        ArrayList<double[]> frameList;
-        //these are public static to be tuned in dashboard
-        public static double strictLowS = 140;
-        public static double strictHighS = 255;
-
         int location;
-
-        public DetectJunctionPipeline() {
-            frameList = new ArrayList<>();
-        }
 
         public int getLocation() {
             return location;
@@ -76,7 +65,7 @@ public class DetectJunction {
 
             // resize
             Mat resized = new Mat();
-            Imgproc.resize(mat, resized, new Size(300, 183));
+            Imgproc.resize(mat, resized, new Size(200, 112));
 
             // blur
             Mat blurred = new Mat();
@@ -89,7 +78,7 @@ public class DetectJunction {
             // find median x-coordinate of yellow pixels
             ArrayList<Integer> results = new ArrayList();
 
-            for (int r=0; r<thresh.rows(); r+=2)
+            for (int r=0; r<thresh.rows(); r+=3)
             {
                 ArrayList<Integer> locations = new ArrayList();
                 for (int c=0; c<thresh.cols(); c++)
