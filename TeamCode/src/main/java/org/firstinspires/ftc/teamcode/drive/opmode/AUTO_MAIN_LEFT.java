@@ -11,10 +11,9 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.DetectJunction;
+import org.firstinspires.ftc.teamcode.drive.ComputerVision;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-import org.firstinspires.ftc.teamcode.drive.SignalSleeveDetection;
 import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
@@ -31,9 +30,9 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
 
         DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
 
-        SignalSleeveDetection signalSleeveDetection = new SignalSleeveDetection(hardwareMap);
+        ComputerVision computerVision = new ComputerVision(hardwareMap);
         int detection;
-        
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         DcMotor LSmotor = hardwareMap.dcMotor.get("LSmotor");
@@ -44,7 +43,7 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
 
         boolean decreasing = false;
         while (!isStarted() && !isStopRequested()) {
-            ArrayList<AprilTagDetection> detections = signalSleeveDetection.pipeline.getLatestDetections();
+            ArrayList<AprilTagDetection> detections = computerVision.pipeline.getAprilTagDetections();
 
             if (detections.size() != 0) {
                 detection = detections.get(0).id;
@@ -77,7 +76,7 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
 
         sleep(100);
 
-        detection = signalSleeveDetection.pipeline.getLatestDetections().size() == 0 ? 19 : signalSleeveDetection.pipeline.getLatestDetections().get(0).id | 19;
+        detection = computerVision.pipeline.getAprilTagDetections().size() == 0 ? 19 : computerVision.pipeline.getAprilTagDetections().get(0).id | 19;
 
         clawServo.setPosition(0.7);
 
@@ -102,7 +101,7 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
         }
         LSmotor.setPower(0.1);
 
-        lineUpToJunction();
+        lineUpToJunctionUsingCamera(computerVision);
 
         sleep(200);
         clawServo.setPosition(0.3);
@@ -169,7 +168,7 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
         sleep(50);
     }
 
-    void lineUpToJunctionUsingCamera(DetectJunction detectJunction) {
+    void lineUpToJunctionUsingCamera(ComputerVision computerVision) {
         DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
 
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("LFmotor");
@@ -177,7 +176,7 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("RFmotor");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("RBmotor");
 
-        int location = detectJunction.pipeline.getLocation();
+        int location = computerVision.pipeline.getJunctionLocation();
         double distance = YDist.getDistance(DistanceUnit.CM);
 
         while (!(Math.abs(location-115) < 20 && distance < 40)) {
@@ -204,7 +203,7 @@ public class AUTO_MAIN_LEFT extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
 
-            location = detectJunction.pipeline.getLocation();
+            location = computerVision.pipeline.getJunctionLocation();
             distance = YDist.getDistance(DistanceUnit.CM);
         }
 

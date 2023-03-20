@@ -7,10 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.DetectJunction;
+import org.firstinspires.ftc.teamcode.drive.ComputerVision;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
-import java.util.ArrayList;
 
 @TeleOp
 public class DetectJunctionAuto extends LinearOpMode {
@@ -18,17 +16,16 @@ public class DetectJunctionAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DetectJunction detectJunction = new DetectJunction(hardwareMap, telemetry);
+        ComputerVision computerVision = new ComputerVision(hardwareMap);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         waitForStart();
 
-        lineUpToJunctionUsingCamera(detectJunction);
+        lineUpToJunctionUsingCamera(computerVision);
     }
 
-    void lineUpToJunctionUsingCamera(DetectJunction detectJunction)
-    {
+    void lineUpToJunctionUsingCamera(ComputerVision computerVision) {
         DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
 
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("LFmotor");
@@ -36,7 +33,7 @@ public class DetectJunctionAuto extends LinearOpMode {
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("RFmotor");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("RBmotor");
 
-        int location = detectJunction.pipeline.getLocation();
+        int location = computerVision.pipeline.getJunctionLocation();
         double distance = YDist.getDistance(DistanceUnit.CM);
 
         while (!(Math.abs(location-115) < 20 && distance < 40)) {
@@ -63,7 +60,7 @@ public class DetectJunctionAuto extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
 
-            location = detectJunction.pipeline.getLocation();
+            location = computerVision.pipeline.getJunctionLocation();
             distance = YDist.getDistance(DistanceUnit.CM);
         }
 
@@ -72,4 +69,5 @@ public class DetectJunctionAuto extends LinearOpMode {
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
     }
+
 }

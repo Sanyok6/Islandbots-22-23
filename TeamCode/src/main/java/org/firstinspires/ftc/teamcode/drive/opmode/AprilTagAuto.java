@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.drive.SignalSleeveDetection;
+import org.firstinspires.ftc.teamcode.drive.ComputerVision;
 import org.openftc.apriltag.AprilTagDetection;
 
 
@@ -16,10 +16,10 @@ public class AprilTagAuto extends LinearOpMode {
     @Override
     public void runOpMode()
     {
-        SignalSleeveDetection signalSleeveDetection = new SignalSleeveDetection(hardwareMap);
+        ComputerVision computerVision = new ComputerVision(hardwareMap);
 
         while (!isStarted() && !isStopRequested()) {
-            ArrayList<AprilTagDetection> detections = signalSleeveDetection.pipeline.getLatestDetections();
+            ArrayList<AprilTagDetection> detections = computerVision.pipeline.getAprilTagDetections();
 
             if (detections.size() != 0) {
                 AprilTagDetection detection = detections.get(0);
