@@ -71,7 +71,5 @@ public class DetectJunctionAuto extends LinearOpMode {
         motorBackLeft.setPower(0);
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
-
-
     }
 }

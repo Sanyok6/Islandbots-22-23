@@ -6,29 +6,45 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.drive.ComputerVision;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.SignalSleeveDetection;
+import org.openftc.apriltag.AprilTagDetection;
 
-@Autonomous(group = "drive")
+import java.util.ArrayList;
+
+@Autonomous()
 public class AUTO_THREE_CONE_LEFT extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor lights = hardwareMap.dcMotor.get("Lights");
-        lights.setPower(0.01);
-
-        DistanceSensor YDist = hardwareMap.get(DistanceSensor.class, "YDist");
-
-        SignalSleeveDetection signalSleeveDetection = new SignalSleeveDetection(hardwareMap);
-        int detection;
-
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        DcMotor LSmotor = hardwareMap.dcMotor.get("LSmotor");
-        LSmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LSmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ComputerVision computerVision = new ComputerVision(hardwareMap);
 
-        Servo clawServo = hardwareMap.servo.get("claw");
+        while (!isStarted() && !isStopRequested()) {
+            ArrayList<AprilTagDetection> detections = computerVision.pipeline.getAprilTagDetections();
+
+            if (detections.size() != 0) {
+                int detection = detections.get(0).id;
+                if (detection == 17) {
+                    telemetry.addLine("Detected parking spot #1");
+                } else if (detection == 19) {
+                    telemetry.addLine("Detected parking spot #2");
+                } else if (detection == 12) {
+                    telemetry.addLine("Detected parking spot #3");
+                }
+            } else {
+                telemetry.addLine("No tag visible!");
+            }
+
+            int junctionPosition = computerVision.pipeline.getJunctionLocation();
+
+            telemetry.addData("junction pos", junctionPosition);
+
+            telemetry.update();
+        }
+
     }
 }
